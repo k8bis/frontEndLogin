@@ -1,32 +1,5 @@
 const express = require('express');
 const app = express();
-/*
-const nodemailer = require('nodemailer');
-const{google} = require("googleapis");
-const OAuth2 = google.auth.OAuth2;
-
-const accountTransport = require("./account_transport.json");
-
-const mail_rover = async(callback) =>{
-    const OAuth2Client = new OAuth2(
-        accountTransport.auth.clientId,
-        accountTransport.auth.clientSecret,
-        "https://developers.google.com/oauthplayground",
-    );
-    OAuth2Client.setCredentials({
-        refresh_token: accountTransport.auth.refreshToken,
-        tls:{
-            rejectUnauthorized: false
-        }
-    });
-    OAuth2Client.getAccessToken((err,token)=>{
-        if(err)
-            return console.log(err);;
-        accountTransport.auth.accessToken = token;
-        callback(nodemailer.createTransport(accountTransport));
-    });
-};
-*/
 
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());

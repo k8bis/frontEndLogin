@@ -1,12 +1,15 @@
+const packageJSON = require("../package.json");
+
+const appName = packageJSON.name;
 const express = require('express');
 const router = express.Router();
 const bcryptjs = require('bcryptjs');
 const connection = require('../database/db');
-//const transporter = require('../nodemailer/email');
 const nodemailer = require('nodemailer');
 
 const  generateRandomString = (num) => {
-    const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//    const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters ='0123456789';
     let result1= ' ';
     const charactersLength = characters.length;
     for ( let i = 0; i < num; i++ ) {
@@ -15,12 +18,16 @@ const  generateRandomString = (num) => {
 
     return result1;
 };
-
+ 
 router.get('/',(req,res)=>{
     if(req.session.loggedin){
         res.render('index',{
+            title: appName,
             login: true,
-            name: req.session.name
+            name: req.session.name,
+            idrol: req.session.idroles,
+            email: req.session.email
+
         });
     }else{
         res.render('login',{ 
@@ -54,7 +61,8 @@ router.get('/forgot-password',(req,res)=>{
 
 router.post('/forgot', async(req,res)=>{
     const email = req.body.email;
-    const newPassword = '1234';//generateRandomString(5);
+    const newPassword = '1234';
+    //const newPassword = generateRandomString(4);
 
     let passwordHaash = await bcryptjs.hash(newPassword, 8);
 
@@ -62,126 +70,84 @@ router.post('/forgot', async(req,res)=>{
         res.render('forgot-password',{
             title: 'Recuperar Contraseña',
             alert: 'Capture un correo valido.'
-        })
+        });
+
     }else{
         connection.query('SELECT idusers,email,nombres,pass FROM users WHERE email = ?',[email], async (error,results,fields)=>{
             if ( results.length > 0 ) {
                 const {idusers,email,nombres,pass} = results[0];
                 const query = 'CALL userUpdateOrInsert( ?, null,null,null,?);';
-                
                 console.log(idusers+ ' : ' + newPassword);
 
                 connection.query(query,[idusers,passwordHaash],(error,results,fields)=>{
-                    if(!error){
-/*                        const transporter = nodemailer.createTransport({
-                            host:'smtp-mail.outlook.com',
-                            port: 587,
-                            secure: false,
-                            auth:{
-                                user:'jr.rodriguezd@hotmail.com',
-                                pass: 'Cochobis3566'
-                            },
-                            tls:{
-                                rejectUnauthorized: false
-                            }
-                        });
-                        
-                        contentHTML = `
-                            <H1> User Information </H1>
-                            <ul>
-                                <li>Email: ${email} </li>
-                                <li>Contraseña Temporal: ${newPassword} </li>
-                            </ul>
-                            <p>Se solicito el cambio de su contraseña al sistema de tickets PriceSoft. Recuerda que debes entrar al sistema y personalizar tu contraseña.</p>
-                        `;
-
-                        console.log(contentHTML);
-        
-                        const info =  await transporter.sendMail({
-                            from: "'RodelSoft Tickets' <jr.rodriguezd@hotmail.com>",
-                            to: email,
-                            subject:'RodelSoft Tickets Recupera tu contraseña',
-                            html: contentHTML
-                        });*/
-                        res.render('forgot-password',{ 
-                            title: 'Recuperar Contraseña',
-                            alert: 'Correo enviado Satisfactoriamente.'
-                        });
+                    if(error){
+                        console.log(error);
                     }else{
-                        console.log(err);
+                        res.render('forgot-password',{
+                            title: 'Recuperar Contraseña',
+                            alert: 'Correo Enviado.'
+                        });                
                     }
-                });
+                })
             }else{
-                res.render('forgot-password',{ 
+                res.render('forgot-password',{
                     title: 'Recuperar Contraseña',
-                    alert: 'Correo inexistente.'
-                }); 
+                    alert: 'Correo no encontrado.'
+                });                
             }
         })
     }
-
+    
 });
 
-/*
+
 router.get('/register',(req,res)=>{
     if (req.session.loggedin){
         res.render('register');
     }else{
         res.render('index',{
-            title: 'Autenticacion de usuario'
-        })
+            title: appName,
+            login: true,
+            name: req.session.name,
+            idrol: req.session.idroles
+        });
     }
 });
-*/
+
 
 router.post('/auth', async (req, res)=> {
-	const user = req.body.user;
-	const pass = req.body.pass;    
-    let passwordHash = await bcryptjs.hash(pass, 8);
-	if (user && pass) {
-		connection.query('SELECT * FROM users WHERE email = ?', [user], async (error, results, fields)=> {
-			if( results.length == 0 || !(await bcryptjs.compare(pass, results[0].pass)) ) {    
-				res.render('login', {
-                    title: 'error',
-                    alert: 'Usuario y/o Contraseña Incorrectos.'
- /*                       alert: true,
-                        alertTitle: "Error",
-                        alertMessage: "USUARIO y/o PASSWORD incorrectas",
-                        alertIcon:'error',
-                        showConfirmButton: true,
-                        timer: false,
-                        ruta: 'login'  */  
-                    });
-				
-				//Mensaje simple y poco vistoso
-                //res.send('Incorrect Username and/or Password!');				
-			} else {         
-				//creamos una var de session y le asignamos true si INICIO SESSION       
-				req.session.loggedin = true;                
-				req.session.name = results[0].nombres;
-				res.render('index', {
-                    title:'ok',
-                    login: true,
-                    name: req.session.name
-/*					alert: true,
-					alertTitle: "Conexión exitosa",
-					alertMessage: "¡LOGIN CORRECTO!",
-					alertIcon:'success',
-					showConfirmButton: false,
-					timer: 1500,
-					ruta: ''*/
-				});        			
-			}			
-			res.end();
-		});
-	} else {	
-        res.render('login', {
-            title: 'error',
-            alert: 'Capture su usuario y su contraseña.'
-        });
-/*		res.send('Please enter user and Password!');
-		res.end();*/
-	}
+    const user = req.body.user;
+    const pass = req.body.pass;
+
+    let passwordHaash = await bcryptjs.hash(pass,8);
+    connection.query('SELECT * FROM users WHERE email = ?', [user], async (error, results)=> {
+        if( results.length == 0 || !(await bcryptjs.compare(pass, results[0].pass)) ) { 
+            res.render('login', {
+                title: 'error',
+                alert: 'Usuario y/o Contraseña Incorrectos.'
+            })
+        }else{
+            const iduser = results[0].idusers;
+
+
+
+            const grales = {title: appName,
+                login: true,
+                name: results[0].nombres,
+                idrol: results[0].idroles,
+                email: user
+            };
+        
+
+                
+            res.render('index',{grales:grales});
+        };
+    })
+
+    
+
+
+
 });
 
 router.post('/register', async (req,res)=>{
@@ -206,6 +172,29 @@ router.post('/register', async (req,res)=>{
             })
         }
     })
+});
+
+router.post('/addTickets',async(req,res)=>{
+    const idusersAsignado = req.body.idusersAsignado;
+    const ticketsDescripcion = req.body.ticketsDescripcion;
+    const idusers = req.session.idusers;
+
+    const query = "CALL ticketsUpdateOrInsert(0,?,?,?,null);";
+
+    connection.query(query,[ticketsDescripcion,idusers,idusersAsignado],(error,results,fields)=>{
+        if(error){
+            console.log(error);
+        }else{
+            res.render('index',{
+                title: appName,
+                login: true,
+                name: req.session.name,
+                idrol: req.session.idroles,
+                email: req.session.user
+            });                 
+        }
+    })
+        
 });
 
 module.exports = router;

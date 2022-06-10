@@ -1,0 +1,28 @@
+<!-- Logout Modal-->
+<div class="modal fade" id="addTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Alta de Ticket de Servicio</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form action="/addTickets" method="POST" class="user">
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-user" name="idusersAsignado"  placeholder="Asigne al usuario responsable.">
+                    
+                </div>
+
+                <div class="form-group">
+                    <textarea type="text" class="form-control form-control-user" name="ticketsDescripcion" placeholder="Descripcion del Ticket"></textarea>
+                </div>
+               
+                <input type="submit" class="btn btn-primary btn-user btn-block" value="Agregar Ticket">
+            </form>
+        </div>
+    </div>
+</div>
+</div>
