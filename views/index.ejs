@@ -48,16 +48,17 @@
                         
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered table-striped" id="dataTable" class="display nowrap" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Id</th>
-                                            <th>Fecha de Alta</th>
-                                            <th>Usuario reporta</th>
-                                            <th>Problema Reportado</th>
+                                            <th class="idusers">Id</th>
+                                            <th class="ticketsFechaAlta">Fecha de Alta</th>
+                                            <th class="idusersAlta">Usuario reporta</th>
+                                            <th class="ticketsDescripcion">Problema Reportado</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody >
 
                                     </tbody>
                                 </table>
@@ -91,12 +92,15 @@
     <%- include ('partials/profileModal') %>
     <%- include ('partials/addUserModal') %>
     <%- include ('partials/addTicketModal') %>
+    <%- include ('partials/closeTicketModal') %>
 
     <%- include ('partials/footer-script') %>
+
     <script>
         $(document).ready(function() {
-            var url = 'http://192.168.0.17:3001/test'
+            var url = 'http://192.168.0.17:3001/ticketsXUsuario/<%=grales.iduser%>'
             $('#dataTable').DataTable({
+                responsive:true,
                 "ajax":{
                     "url":url,
                     "dataSrc":""
@@ -106,24 +110,33 @@
                     {"data":"ticketsFechaAlta"},
                     {"data":"nombresAlta"},
                     {"data":"ticketsDescripcion"},
+                    {"data":"accion"},
                 ],
                 "columnDefs":[
                     {
                         targets: 0,
                         className:'dt-body-center',
-                        width: "5%"
+                        responsivePriority: 1,
+                        width: "2%"
+                        
                     },
-                    {
+                    { 
                         targets: 1,
-                        width: "25%"
+                        className:'dt-body-center',
+                        responsivePriority: 10001  
                     },
                     {
-                        targets: 2,
-                        width: "20%"
-                    },
-                    {
-                        targets: 3,
-                        width: "50%"
+                        targets: -1,
+                        className:'dt-body-center',
+                        data: null,
+                        defaultContent:`<a href="#" class="btn btn-success btn-icon-split btn-closeTicket" id="btnCloseTicket" data-toggle="modal" data-target="#closeTicketModal">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                            <span class="text">Cerrar</span>
+                                        </a>`,
+                        responsivePriority: 1,
+                        width: "5%"
                     },
                 ],
                 language: {
@@ -147,8 +160,33 @@
                     }
                 },
             });
+
         });
+
+        var fila;
+
+        $(document).on("click", ".btn-closeTicket", function(){
+            fila = $(this).closest("tr");
+            noTicket            = fila.find('td:eq(0)').text();
+            ticketsFechaAlta    = fila.find('td:eq(1)').text();
+            nombresAlta         = fila.find('td:eq(2)').text();
+            ticketsDescripcion  = fila.find('td:eq(3)').text();
+
+            $('#ticket').val(noTicket);
+            $('#fechaAlta').val(ticketsFechaAlta);
+            $('#nombre').val(nombresAlta);
+            $('#descripcion').val(ticketsDescripcion);
+            
+        });
+
+        $(document).on("click", "#botonCerrarTicket", function(){
+            fila = $(this).closest("form");
+
+            alert(fila);
+        });
+
     </script>
+    
 </body>
 
 </html>

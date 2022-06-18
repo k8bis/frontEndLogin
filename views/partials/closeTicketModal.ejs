@@ -1,0 +1,35 @@
+<!-- Logout Modal-->
+<div class="modal fade" id="closeTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cerrar Ticket</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/closeTicket" method="POST" class="user">
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="text" class="form-control form-control-user text-center font-weight-bold" name="noTicket" id="ticket" disabled>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control form-control-user text-center font-weight-bold" name="ticketsFechaAlta" id="fechaAlta" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user text-center font-weight-bold" name="nombresAlta" id="nombre" disabled>
+                    </div>
+                    <div class="form-group">
+                        <textarea type="text" class="form-control form-control-user" name="ticketsDescripcion" id="descripcion" resize="none" disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <textarea type="text" class="form-control form-control-user" name="ticketsCierre" id="cierre" placeholder="Observaciones de cierre"></textarea>
+                    </div>
+                    <input type="submit" d="botonCerrarTicket" class="btn btn-primary btn-user btn-block" value="Cerrar Ticket">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

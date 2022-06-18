@@ -12,8 +12,12 @@ aria-hidden="true">
         <div class="modal-body">
             <form action="/addTickets" method="POST" class="user">
                 <div class="form-group">
-                    <input type="text" class="form-control form-control-user" name="idusersAsignado"  placeholder="Asigne al usuario responsable.">
-                    
+                    <select name="idusersAsignado" class="custom-select">
+                        <option selected>Usuario Asignado</option>
+                        <% catUsuarios.forEach(function(user){%>
+                            <option value=<%=user.idusers%>><%=user.nombres%></option>
+                        <%})%>   
+                    </select>             
                 </div>
 
                 <div class="form-group">

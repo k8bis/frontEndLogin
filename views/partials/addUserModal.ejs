@@ -10,26 +10,24 @@ aria-hidden="true">
             </button>
         </div>
         <div class="modal-body">
-            <form class="user">
+            <form action="/register" method="POST" class="user">
                 <div class="form-group">
-                    <input type="text" class="form-control form-control-user" id="nombres" placeholder="Nombre completo">
+                    <input type="text" class="form-control form-control-user" name="nombres" placeholder="Nombre completo">
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-control form-control-user" id="email" placeholder="Correo Electronico">
+                    <input type="email" class="form-control form-control-user" name="email" placeholder="Correo Electronico">
                 </div>
                 <div class="form-floating">
-                    <select class="custom-select custom-select-lg mb-3">
+                    <select class="custom-select custom-select-lg mb-3" name="rol">
                         <option selected>Seleccione un valor de la lista</option>
                         <option value=1>Administrador</option>
                         <option value=2>Usuario</option>
                       </select>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control form-control-user" id="pass" placeholder="Contraseña">
+                    <input type="password" class="form-control form-control-user" name="pass" placeholder="Contraseña">
                 </div>
-                <a href="login.html" class="btn btn-primary btn-user btn-block">
-                    Agregar Usuario
-                </a>
+                <input type="submit" class="btn btn-primary btn-user btn-block" value="Agregar Usuario">
             </form>
         </div>
     </div>
