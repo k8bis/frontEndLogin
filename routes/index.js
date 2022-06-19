@@ -158,7 +158,7 @@ router.post('/addTickets',async(req,res)=>{
                                                             '&idUserAlta=' + infoTicket.idUserAlta +
                                                             '&idUserAsignado=' + infoTicket.idUserAsignado +
                                                             '&ticketCierre=' + infoTicket.ticketCierre);
-    console.log('resultado: ' + resultado);
+    console.log('resultado: ' + JSON.stringify(resultado));
     if(!resultado.result === 'ok'){
         console.log(resultado);
     }else{
