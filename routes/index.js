@@ -152,7 +152,8 @@ router.post('/addTickets',async(req,res)=>{
         ticketCierre: null
     };
     console.log('infoTicket: ' + JSON.stringify(infoTicket));
-    let resultado = await getJSON(process.env.API_SERVER + '/addUpdateTickets',infoTicket);
+    //let resultado = await getJSON(process.env.API_SERVER + '/addUpdateTickets',infoTicket);
+    let resultado = await getJSON(`http://45.33.3.22:3001/addUpdateTickets?idTicket=0&ticketDescripcion=prod prueba servicio arriba1&idUserAlta=1&idUserAsignado='15'&ticketCierre=null`);
     console.log('resultado: ' + resultado);
     if(!resultado.result === 'ok'){
         console.log(resultado);
