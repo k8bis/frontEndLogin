@@ -151,9 +151,9 @@ router.post('/addTickets',async(req,res)=>{
         idUserAsignado: req.body.idusersAsignado,
         ticketCierre: null
     };
-
+    console.log('infoTicket: ' + infoTicket);
     let resultado = await getJSON(process.env.API_SERVER + '/addUpdateTickets',infoTicket);
-
+    console.log('resultado: ' + resultado);
     if(!resultado.result === 'ok'){
         console.log(resultado);
     }else{
