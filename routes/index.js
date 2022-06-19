@@ -148,7 +148,7 @@ router.post('/addTickets',async(req,res)=>{
     const infoTicket = { idTicket: 0,
         ticketDescripcion: req.body.ticketsDescripcion,
         idUserAlta: req.session.idusers,
-        idUserAsignado: req.body.idusersAsignado,
+        idUserAsignado: parseInt(req.body.idusersAsignado),
         ticketCierre: null
     };
     console.log('infoTicket: ' + JSON.stringify(infoTicket));
