@@ -98,7 +98,7 @@
 
     <script>
         $(document).ready(function() {
-            var url = 'http://192.168.0.17:3001/ticketsXUsuario/<%=grales.iduser%>'
+            var url = '<%=process.env.API_SERVER%>/ticketsXUsuario/<%=grales.iduser%>'
             $('#dataTable').DataTable({
                 responsive:true,
                 "ajax":{
