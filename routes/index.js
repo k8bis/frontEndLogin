@@ -78,10 +78,10 @@ router.post('/forgot', async(req,res)=>{
 
     //validamos si existe el correo
     let resultado = await getJSON(process.env.API_SERVER + '/getCatUsuarios/0&'+ email);
+    //console.log(JSON.stringify(resultado[0].idusers));
+    //const idusers = resultado.users;
 
-    const idusers = resultado.users;
-
-    const iduser = idusers[0].idusers;
+    const iduser = resultado[0].idusers;
 
     if (iduser > 0){
         let user = await getJSON(process.env.API_SERVER + '/forgotPassword/'+ iduser);
@@ -147,7 +147,7 @@ router.post('/register', async (req,res)=>{
 router.post('/addTickets',async(req,res)=>{
     const infoTicket = { idTicket: 0,
         ticketDescripcion: req.body.ticketsDescripcion,
-        idUserAlta: req.session.idusers,
+        idUserAlta: parseInt(req.session.idusers),
         idUserAsignado: parseInt(req.body.idusersAsignado),
         ticketCierre: null
     };
