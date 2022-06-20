@@ -8,7 +8,6 @@ const connection = require('../database/db');
 const bent = require('bent');
 const getJSON = bent('json');
 
-
 router.get('/',async (req,res)=>{
     if(req.session.loggedin){
         let catUsuarios = await getJSON( process.env.API_SERVER + '/getCatUsuarios');
@@ -76,10 +75,7 @@ router.post('/auth', async (req, res)=> {
 router.post('/forgot', async(req,res)=>{
     const email = req.body.email;
 
-    //validamos si existe el correo
     let resultado = await getJSON(process.env.API_SERVER + '/getCatUsuarios/0&'+ email);
-    //console.log(JSON.stringify(resultado[0].idusers));
-    //const idusers = resultado.users;
 
     const iduser = resultado[0].idusers;
 
@@ -91,7 +87,6 @@ router.post('/forgot', async(req,res)=>{
         alert: 'La contraseña temporal se ha enviado al correo registrado.'});   
     };
 });
-
 
 router.get('/logout',(req,res)=>{
     req.session.destroy(()=>{
@@ -126,22 +121,17 @@ router.post('/register', async (req,res)=>{
     const rol = req.body.rol;
     const pass = req.body.pass;
 
-    let passwordHaash = await bcryptjs.hash(pass, 8);
-    connection.query('INSERT INTO users SET ?',{email:email,nombres:name,idroles:rol,pass:passwordHaash}, async(error,results)=>{
-        if(error){
-            console.log(error);
-        }else{
-            res.render('register',{
-                alert: true,
-                alertTitle: "Registro",
-                alertMessage:"Alta Exitosa",
-                alertIcon: 'success',
-                showConfirmButton:false,
-                timer:1500,
-                ruta:''
-            })
-        }
-    })
+    let resultado = await getJSON(process.env.API_SERVER + '/addUpdateUsers?idusers=0' +
+                                                            '&email=' + email +
+                                                            '&nombres=' + name +
+                                                            '&idroles=' + rol + 
+                                                            '&pass=' + pass );
+
+    if(!resultado.result === 'ok'){
+        console.log(resultado);
+    }else{
+        res.redirect('/'); 
+    };
 });
 
 router.post('/addTickets',async(req,res)=>{
@@ -151,14 +141,13 @@ router.post('/addTickets',async(req,res)=>{
         idUserAsignado: parseInt(req.body.idusersAsignado),
         ticketCierre: null
     };
-    //console.log('infoTicket: ' + JSON.stringify(infoTicket));
-    //let resultado = await getJSON(process.env.API_SERVER + '/addUpdateTickets',infoTicket);
+
     let resultado = await getJSON(process.env.API_SERVER + '/addUpdateTickets?idTicket='+ infoTicket.idTicket + 
                                                             '&ticketDescripcion=' + infoTicket.ticketDescripcion + 
                                                             '&idUserAlta=' + infoTicket.idUserAlta +
                                                             '&idUserAsignado=' + infoTicket.idUserAsignado +
                                                             '&ticketCierre=' + infoTicket.ticketCierre);
-    //console.log('resultado: ' + JSON.stringify(resultado));
+
     if(!resultado.result === 'ok'){
         console.log(resultado);
     }else{
@@ -181,23 +170,6 @@ router.post('/closeTicket',async(req,res)=>{
     }else{
         res.redirect('/'); 
     }
-/*    const noTicket     = req.body.noTicket;
-    const ticketsCierre = req.body.ticketsCierre;
-
-    console.log(noTicket);
-
-    const query = "CALL ticketsUpdateOrInsert(?,null,null,null,?);";
-
-    console.log(noTicket+' : '+ticketsCierre);
-
-    connection.query(query,[noTicket,ticketsCierre],(error,results,fields)=>{
-        if(error){
-            console.log(error);
-        }else{
-            res.redirect('/');            
-        }
-    })
-        */
 });
 
 module.exports = router;
