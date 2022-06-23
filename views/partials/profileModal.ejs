@@ -12,13 +12,17 @@ aria-hidden="true">
         <div class="modal-body">
             <form action="/profile" method="POST" class="user">
                 <div class="form-group">
-                    <input type="text" class="form-control form-control-user" id="nombres" placeholder="Nombre completo" value="<%=grales.name%>">
+                    <input type="text" class="form-control form-control-user form-imput text-center font-weight-bold" name="idusers" placeholder="Id" value="<%=grales.iduser%>" readonly>
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-control form-control-user" id="email" placeholder="Correo Electronico" value="<%=grales.email%>">
+                    <input type="text" class="form-control form-control-user" name="nombres" placeholder="Nombre completo" value="<%=grales.name%>">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control form-control-user" id="pass" placeholder="Contraseña">
+                    <input type="email" class="form-control form-control-user" name="email" placeholder="Correo Electronico" value="<%=grales.email%>" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-bold" for="exampleInputEmail1">Escriba su contraseña para confirmar los cambios</label>
+                    <input type="password" class="form-control form-control-user" name="pass" placeholder="Contraseña" required>
                 </div>
                 <input type="submit" class="btn btn-primary btn-user btn-block" value="Actualizar Informacion">
             </form>

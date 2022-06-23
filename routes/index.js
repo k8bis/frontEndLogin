@@ -3,10 +3,9 @@ const packageJSON = require("../package.json");
 const appName = packageJSON.name;
 const express = require('express');
 const router = express.Router();
-const bcryptjs = require('bcryptjs');
-const connection = require('../database/db');
 const bent = require('bent');
 const getJSON = bent('json');
+
 
 router.get('/',async (req,res)=>{
     if(req.session.loggedin){
@@ -42,34 +41,31 @@ router.post('/auth', async (req, res)=> {
     const user = req.body.user;
     const pass = req.body.pass;
     
-    connection.query('SELECT * FROM users WHERE email = ?', [user], async (error, results)=> {
-        if( results.length == 0 || !(await bcryptjs.compare(pass, results[0].pass)) ) { 
-            res.render('login', {
-                title: 'error',
-                alert: 'Usuario y/o Contraseña Incorrectos.'
-            })
-        }else{
-            const iduser = results[0].idusers;
+    let infoUser = await getJSON(process.env.API_SERVER + '/authentication/' + user+ '&' +pass);
+    if (infoUser.estatus == 'ok'){
+        let catUsuarios = await getJSON(process.env.API_SERVER + '/getCatUsuarios');
 
-            req.session.loggedin = true;                
-            req.session.name = results[0].nombres;
-            req.session.idroles = results[0].idroles;
-            req.session.idusers = iduser;
-            req.session.email = user;
+        req.session.loggedin = true;                
+        req.session.name = infoUser.nombre;
+        req.session.idroles = infoUser.idrol;
+        req.session.idusers = infoUser.iduser;
+        req.session.email = user;
 
-            let catUsuarios = await getJSON(process.env.API_SERVER + '/getCatUsuarios');
-
-            const grales = {title: appName,
-                login: true,
-                name: results[0].nombres,
-                idrol: results[0].idroles,
-                email: user,
-                iduser: iduser,
-            };
-
-            res.render('index',{grales:grales,catUsuarios:catUsuarios.users});
+        const grales = {title: appName,
+            login: true,
+            name: infoUser.nombre,
+            idrol: infoUser.idrol,
+            email: user,
+            iduser: infoUser.iduser,
         };
-    })
+
+        res.render('index',{grales:grales,catUsuarios:catUsuarios.users});
+    }else{
+        res.render('login', {
+            title: 'error',
+            alert: infoUser.estatus
+        })
+    };
 });
 
 router.post('/forgot', async(req,res)=>{
@@ -132,6 +128,27 @@ router.post('/register', async (req,res)=>{
     }else{
         res.redirect('/'); 
     };
+});
+
+router.post('/profile',async(req,res)=>{
+    var {idusers, nombres, email, pass} = req.body;
+
+    //console.log(req.body);
+
+    let result = await getJSON(process.env.API_SERVER + '/addUpdateUsers?idusers=' + idusers +
+                                                        '&email=' + email +
+                                                        '&nombres=' + nombres +
+                                                        '&idroles=0' + 
+                                                        '&pass=' + pass );
+    
+    if(result.result == 'ok'){
+        req.session.name = nombres;
+        res.redirect('/'); 
+    }else{
+        console.log(result);
+    };
+
+    //console.log(result);
 });
 
 router.post('/addTickets',async(req,res)=>{
