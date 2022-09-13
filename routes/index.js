@@ -4,12 +4,15 @@ const appName = packageJSON.name;
 const express = require('express');
 const router = express.Router();
 const bent = require('bent');
+const { response } = require("express");
 const getJSON = bent('json');
 
 
 router.get('/',async (req,res)=>{
     if(req.session.loggedin){
         let catUsuarios = await getJSON( process.env.API_SERVER + '/getCatUsuarios');
+
+        console.log(process.env);
 
         const grales = {title: appName,
             login: true,
@@ -172,6 +175,19 @@ router.post('/addTickets',async(req,res)=>{
     }
 });
 
+router.post('/addUpdateTickets', async( req, res) => {
+    var {idTicket,ticketDescripcion,idUserAlta,idUserAsignado,ticketCierre} = req.query;
+
+    //console.log(req.query);
+
+    let resultado = await getJSON(process.env.API_SERVER + '/addUpdateTickets?idTicket='+ req.query.idTicket + 
+                                                            '&ticketDescripcion=' + req.query.ticketDescripcion + 
+                                                            '&idUserAlta=' + req.query.idUserAlta +
+                                                            '&idUserAsignado=' + req.query.idUserAsignado +
+                                                            '&ticketCierre=' + req.query.ticketCierre);
+    res.json(resultado[0]);
+});
+
 router.post('/closeTicket',async(req,res)=>{
     const infoTicket = { idTicket: req.body.noTicket,
         ticketDescripcion: null,
@@ -187,6 +203,22 @@ router.post('/closeTicket',async(req,res)=>{
     }else{
         res.redirect('/'); 
     }
+});
+
+router.post('/ticketsXUsuario', async(req,res)=>{
+    var iduser = req.body.iduser;
+
+    let resultado = await getJSON(process.env.API_SERVER + '/ticketsXUsuario/' + iduser);
+
+    res.json(resultado);
+});
+
+router.post('/getTicketXId/:idticket', async(req, res) => {
+    var id = req.params.idticket;
+
+    let resultado = await getJSON(process.env.API_SERVER + '/getTicketXId/' + id);
+
+    res.json(resultado[0]);
 });
 
 module.exports = router;
